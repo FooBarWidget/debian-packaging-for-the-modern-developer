@@ -17,6 +17,19 @@ print("hello 1")
 
 Let's build a simple package for this application, using as few tools and concepts as possible. This is not the proper way to build a package, but it helps you understand what a package is.
 
+**Table of contents**
+
+ * Creating the application
+ * Creating the package root directory
+   - Control file fields
+ * Turning the package root directory into a package
+ * Verifying that it works
+ * Conclusion
+
+---
+
+## Creating the application
+
 First, create a directory for this tutorial and place the above application in `hello1.py`:
 
 ~~~bash
@@ -25,6 +38,8 @@ cd tutorial-1
 editor hello1.py   # put the above source code in this file
 chmod +x hello1.py
 ~~~
+
+## Creating the package root directory
 
 Now that we have an application, let's build a package. The simplest application that builds a package is `dpkg-deb`. It accepts a directory containing package metadata files and content files. Let's create this directory. We call it `packageroot` but it can have any name.
 
@@ -54,7 +69,9 @@ Description: John's first hello package
  It is awesome.
 ~~~
 
-These are the meanings of the field:
+### Control file fields
+
+These are the meanings of the fields:
 
  * "Package" specifies the package name.
  * "Version" specifies the package version number.
@@ -64,6 +81,8 @@ These are the meanings of the field:
  * "Description" contains a summary on the first line, and a more verbose description on subsequent lines. The summary is what you see in `apt-cache search` while the more verbose description is what you see in APT GUIs such as the Ubuntu App Store or Aptitude.
 
    Note: the verbose description must be prefixed with a single space! And empty lines must contain a single dot character.
+
+## Turning the package root directory into a package
 
 Next, let's define the package contents. All files under the package root directory, except for `DEBIAN`, is considered part of the content. We want hello1.py to be installed as /usr/bin/hello1.py, so:
 
@@ -78,6 +97,8 @@ Now that the package root directory is finished, we turn it into a .deb file:
 dpkg-deb -b packageroot hello1_1.0.0_all.deb
 ~~~
 
+## Verifying that it works
+
 Success! You can now install the .deb file and verify that it works:
 
 ~~~
@@ -85,3 +106,9 @@ $ sudo apt install -y ./hello1_1.0.0_all.deb
 $ hello1.py
 hello 1
 ~~~
+
+## Conclusion
+
+A Debian package is an archive file that contains metadata (such as name, dependencies, description) and files. You have learned how to write a basic metadata specification file (the `control` file) and you have learned how this, combined with the actual files that you want the package to contain, can be turned into a .deb file using `dpkg-deb`.
+
+But as mentioned earlier, using `dpkg-deb` like this is not the *proper* way to make a package. In the next tutorial we will learn why, and what you should do instead.
