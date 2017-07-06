@@ -1,0 +1,11 @@
+Source: hello2
+Maintainer: John Doe <john@doe.com>
+
+Package: hello2
+Architecture: all
+Depends: python
+Description: John's second hello package
+ John's second hello package is written in Python
+ and prints "hello 2".
+ .
+ It is awesome.

@@ -15,7 +15,7 @@ Let's say you have a hello world application written in Python. It's only job is
 print("hello 1")
 ~~~
 
-Let's build a simple package for this application, using as few tools and concepts as possible. This is not the proper way to build a package, but it helps you understand what a package is.
+Let's build a simple package for this application, using as few tools and concepts as possible. This is not the proper way to build a package, but it helps you understand what a package is and how the basic process works. The fully proper way to build a package is quite complicated and involves many tools and concepts that build on top of each other.
 
 **Table of contents**
 
@@ -111,4 +111,4 @@ hello 1
 
 A Debian package is an archive file that contains metadata (such as name, dependencies, description) and files. You have learned how to write a basic metadata specification file (the `control` file) and you have learned how this, combined with the actual files that you want the package to contain, can be turned into a .deb file using `dpkg-deb`.
 
-But as mentioned earlier, using `dpkg-deb` like this is not the *proper* way to make a package. In the next tutorial we will learn why, and what you should do instead.
+But as mentioned earlier, using `dpkg-deb` like this is not the *proper* way to make a package. In the next tutorial we will learn why, and what is a more proper (but still not fully proper) way.

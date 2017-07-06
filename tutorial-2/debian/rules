@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+clean:
+	@# Do nothing
+
+build:
+	@# Do nothing
+
+binary:
+	mkdir -p debian/hello2
+	mkdir -p debian/hello2/usr/bin
+	cp hello2.py debian/hello2/usr/bin/
+	dh_gencontrol
+	dh_builddeb

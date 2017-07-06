@@ -1,0 +1,5 @@
+hello2 (2.0.0) stretch; urgency=medium
+
+  * Initial packaging work.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 09:19:24 +0000
