@@ -11,3 +11,4 @@
 /*/debian/hello
 /*/debian/files
 /*/hello
+debhelper-build-stamp

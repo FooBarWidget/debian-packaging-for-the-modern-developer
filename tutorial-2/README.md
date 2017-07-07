@@ -38,7 +38,7 @@ If you're just packaging your own app, with no intention to submit your packages
 
 ## The dpkg-buildpackage workflow
 
-Let's say we have a hello world Python application named "hello". It prints "hello 2" and we want it to be installed to /usr/bin.
+Let's say we have a hello world Python application named "hello". It prints "hello 2.0.0" and we want it to be installed to /usr/bin.
 
 dpkg-buildpackage requires you to specify:
 
@@ -79,7 +79,7 @@ Then you invoke dpkg-buildpackage (`dpkg-buildpackage -b`) from the application'
 
 Finally, it performs a bunch more postprocessing and runs dpkg-deb to create the .deb file in the *parent* directory:
 
-    ../hello_2.0.0_all.deb
+    ../hello_2.0.0-1_all.deb
 
 Now that you understand the workflow, let's make a package.
 
@@ -98,7 +98,7 @@ chmod +x hello.py
 
 ~~~python
 #!/usr/bin/env python
-print("hello 2")
+print("hello 2.0.0")
 ~~~
 
 ## Creating the `debian/` subdirectory
@@ -147,7 +147,7 @@ The "Source" field specifies the name of the source package, which may be distin
 Put this in the changelog file:
 
 ~~~
-hello (2.0.0) stretch; urgency=medium
+hello (2.0.0-1) stretch; urgency=medium
 
   * Initial packaging work with dpkg-buildpackage.
 
@@ -237,9 +237,9 @@ As you can see from dpkg-buildpackage's output, it runs the 'rules' makefile's t
 When done, you will end up with a .deb file in the *parent* directory. Install it and verify that it works:
 
 ~~~bash
-$ sudo apt install -y ../hello_2.0.0_all.deb
+$ sudo apt install -y ../hello_2.0.0-1_all.deb
 $ hello
-hello 2
+hello 2.0.0
 ~~~
 
 ## Conclusion

@@ -120,13 +120,13 @@ Compared to tutorial 2 we have made the following changes:
 We add a new changelog entry to the beginning of the file. The full file looks like this:
 
 ~~~
-hello (3.0.0) stretch; urgency=medium
+hello (3.0.0-1) stretch; urgency=medium
 
   * Rewrote application in C.
 
  -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
 
-hello (2.0.0) stretch; urgency=medium
+hello (2.0.0-1) stretch; urgency=medium
 
   * Initial packaging work with dpkg-buildpackage.
 
@@ -159,6 +159,7 @@ build:
 binary:
 	make install DESTDIR=debian/hello
 	dh_strip
+	dh_makeshlibs
 	dh_gencontrol
 	dh_builddeb
 ~~~
@@ -245,4 +246,4 @@ In this tutorial you have learned how to package an application that requires co
  * Modifying the `rules` file to call whatever commands are necessary to compile the application and to install it into the package root directory.
  * Modifying the `control` file to add a few magic pakcages dependency keywords, build dependencies, and architecture information.
 
-You have also learned what debhelper is, how it relates to the mysterious `control/compat` file, and how you can see what debhelper is doing.
+You have also learned what debhelper is, how it relates to the mysterious `control/compat` file, and how you can see what debhelper is doing. But so far we have only used debhelper as minimally as is necessary to learn how it works. In the next tutorial we will show you how to make full use of debhelper, to the extent that debhelper may look like magic to those who haven't read this tutorial 3.

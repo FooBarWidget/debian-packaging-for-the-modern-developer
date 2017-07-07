@@ -1,5 +1,5 @@
 Package: hello
-Version: 1.0.0
+Version: 1.0.0-1
 Architecture: all
 Maintainer: John Doe <john@doe.com>
 Depends: python

@@ -8,6 +8,7 @@ build:
 
 binary:
 	make install DESTDIR=debian/hello
-	env DH_VERBOSE=1 dh_strip
+	dh_strip
+	dh_makeshlibs
 	dh_gencontrol
 	dh_builddeb

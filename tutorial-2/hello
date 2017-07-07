@@ -1,2 +1,2 @@
 #!/usr/bin/env python
-print("hello 2")
+print("hello 2.0.0")

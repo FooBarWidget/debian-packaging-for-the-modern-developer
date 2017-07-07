@@ -1,4 +1,4 @@
-hello (2.0.0) stretch; urgency=medium
+hello (2.0.0-1) stretch; urgency=medium
 
   * Initial packaging work with dpkg-buildpackage.
 

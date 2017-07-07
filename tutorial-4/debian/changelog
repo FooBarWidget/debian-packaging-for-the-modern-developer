@@ -1,3 +1,9 @@
+hello (3.0.0-2) stretch; urgency=medium
+
+  * Made full use of debhelper.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
+
 hello (3.0.0-1) stretch; urgency=medium
 
   * Rewrote application in C.
