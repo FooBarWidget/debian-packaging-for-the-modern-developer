@@ -8,6 +8,8 @@ Also, imagine that you have to conform to even more Debian packaging requirement
 
 In this tutorial we will show you how to use debhelper to its fullest. Your rules file will delegate all work to debhelper, and will become very small as a result.
 
+We will reuse the application from tutorial 3, and only modify the packaging work. So as a side thing we will also demonstrate when is a good time to update the Debian package revision number but not the application number.
+
 **Table of contents**
 
  * Preparation
@@ -185,4 +187,6 @@ The "%" is the wildcard pattern rule, similar to "*" in the context of bash. "$@
 
 ## Conclusion
 
-Congratulations, you're now making full use of debhelper. But what do you do when debhelper doesn't do the right thing, for example when your application is using a custom build system that debhelper does not recognize? Do you fall back to not using debhelper as much, like you did in tutorial 3? There is a better way, which you will learn in the next tutorial.
+Congratulations, you're now making full use of debhelper. And on the side you have also learned when is an appropriate time to bump the Debian package revision number but not the application version number.
+
+But what do you do when debhelper doesn't do the right thing, for example when your application is using a custom build system that debhelper does not recognize? Do you fall back to not using debhelper as much, like you did in tutorial 3? There is a better way, which you will learn in the next tutorial.
