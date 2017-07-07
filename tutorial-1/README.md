@@ -19,13 +19,13 @@ Let's build a simple package for this application, using as few tools and concep
 
 **Table of contents**
 
- * Creating the application
- * Creating the package root directory
-   - Control file fields
- * Turning the package root directory into a package
- * Verifying that it works
- * Inspecting the .deb file
- * Conclusion
+ * [Creating the application](#creating-the-application)
+ * [Creating the package root directory](#creating-the-package-root-directory)
+   - [Control file fields](#control-file-fields)
+ * [Turning the package root directory into a package](#turning-the-package-root-directory-into-a-package)
+ * [Verifying that it works](#verifying-that-it-works)
+ * [Inspecting the .deb file](#inspecting-the-deb-file)
+ * [Conclusion](#conclusion)
 
 ---
 
