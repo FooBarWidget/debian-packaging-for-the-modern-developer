@@ -183,7 +183,7 @@ We can make the rules file even smaller:
 
 Woah, what sort of black magic is this?
 
-The "%" is the wildcard pattern rule, similar to "*" in the context of bash. "$@" refers to the actual target name as passed to Make. So the above rules file simply forwards all make commands to debhelper. It is semantically equivalent to the rules file you saw in subsection "Delegating work to debhelper".
+The "%" is [the wildcard pattern rule](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html), similar to "*" in the context of bash. So "%:" is [the match-anything target](https://www.gnu.org/software/make/manual/html_node/Match_002dAnything-Rules.html#Match_002dAnything-Rules). "$@" refers to the actual target name as passed to Make. So the above rules file simply forwards all make commands to debhelper. It is semantically equivalent to the rules file you saw in subsection "Delegating work to debhelper".
 
 ## Conclusion
 

@@ -6,17 +6,17 @@ The way we teach dpkg-buildpackage in this tutorial is not entirely the proper w
 
 **Table of contents**
 
- * Why dpkg-buildpackage?
- * The dpkg-buildpackage workflow
- * Preparing the application
- * Creating the `debian/` subdirectory
-   - `debian/control`
-   - `debian/changelog`
-   - `debian/compat`
-   - `debian/rules`
- * Building the package
- * Verifying that it works
- * Conclusion
+ * [Why dpkg-buildpackage?](#why-dpkg-buildpackage)
+ * [The dpkg-buildpackage workflow](#the-dpkg-buildpackage-workflow)
+ * [Preparing the application](#preparing-the-application)
+ * [Creating the `debian/` subdirectory](#creating-the-debian-subdirectory)
+   - [`debian/control`](#debiancontrol)
+   - [`debian/changelog`](#debianchangelog)
+   - [`debian/compat`](#debiancompat)
+   - [`debian/rules`](#debianrules)
+ * [Building the package](#building-the-package)
+ * [Verifying that it works](#verifying-that-it-works)
+ * [Conclusion](#conclusion)
 
 ---
 
@@ -110,7 +110,7 @@ Dpkg-buildpackage expects a package specification under a subdirectory named `de
  * `compat` -- specifies the minimum version of debhelper that your package needs. This probably means nothing to you right now, but that's fine, we'll get to this in tutorial 3. For now just understand that it must contain the magic number "9".
  * `rules` -- a file, in `Makefile` format, that specifies how your application must be compiled and how the package root directory should be created.
 
-There are also other possible files, but we'll get to them in later tutorials.
+There are also other possible files, but we'll get to them in later tutorials, such as tutorial 7.
 
 ### `debian/control`
 
@@ -246,4 +246,4 @@ hello 2.0.0
 
 Congratulations, you have learned how to use the dpkg-buildpackage workflow and structure to build a binary package! However this only concludes the beginning of your journey. We taught you how to use dpkg-buildpackage to build a binary package directly, but the proper way of Debian package building involves orig tarballs, source packages and debhelper. Furthermore, we've only packaged Python applications so far, which do not require compilation. Packaging compiled applications is a bit more involved.
 
-We'll explain orig tarballs and source packages in later tutorials. In the next tutorial, let's have a look at how we can package a C application, and what debhelper is. You will learn what the mysterious `debian/compat` file is and what the `dh_*` boilerplate commands do.
+We'll explain orig tarballs and source packages in later tutorials, such as tutorial 6. In the next tutorial, let's have a look at how we can package a C application, and what debhelper is. You will learn what the mysterious `debian/compat` file is and what the `dh_*` boilerplate commands do.

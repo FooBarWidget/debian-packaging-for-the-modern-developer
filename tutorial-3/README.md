@@ -25,7 +25,7 @@ The application in question is a hello world C program that prints "hello 3".
 
 [Debhelper](https://manpages.debian.org/stretch/debhelper/debhelper.7.en.html) is a tool that automates various common aspects of package building. It consists of a collection of commands. In tutorial 2, you've been using debhelper through the `dh_gencontrol` and `dh_builddeb` commands. In this tutorial we will introduce you to more debhelper commands.
 
-Most Debian packages delegate almost all work to debhelper where possible, but that doesn't help you understand what's going on. So in this tutorial we will show you how to use debhelper in an as minimal manner as possible; in later tutorials we will show you how to use debhelper to the fullest.
+Most Debian packages delegate almost all work to debhelper where possible, but that doesn't help you understand what's going on. So in this tutorial we will show you how to use debhelper in an as minimal manner as possible; in the next tutorials we will show you how to use debhelper to the fullest.
 
 ## Preparation
 
@@ -169,6 +169,8 @@ The `clean` and `build` targets are pretty straightforward: they just invoke the
 The `binary` target first calls `make install`, but also passes the DESTDIR variable (which the application's own Makefile respects) to ensure that it installs into debian/hello3/usr/bin instead of /usr/bin.
 
 Next, it calls `dh_strip`, which scans the package root directory for binary files and extracts their debugging symbols into external files. Here is a surprise: calling `dh_strip` is actually *required* when packaging C applications or other applications whose binaries can contain debugging symbols. You will learn why in subsection "Debugging symbol packages".
+
+Next, it calls `dh_makeshlibs` which scans binaries to find out what shared libraries they depend on. The information is used for substituting `${shlibs:Depends}, ${misc:Depends}` in the control file.
 
 Finally, it calls `dh_gencontrol` and `dh_builddeb` to generate two .deb package files: `hello_3.0.0_<ARCH>.deb` and `hello-dbgsym_3.0.0_<ARCH>.deb`.
 
