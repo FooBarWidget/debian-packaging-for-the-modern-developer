@@ -1,10 +1,10 @@
-Package: hello1
+Package: hello
 Version: 1.0.0
 Architecture: all
 Maintainer: John Doe <john@doe.com>
 Depends: python
-Description: John's first hello package
- John's first hello package is written in Python
- and prints "hello 1".
+Description: John's hello package
+ John's hello package is written in Python
+ and prints a greeting.
  .
  It is awesome.

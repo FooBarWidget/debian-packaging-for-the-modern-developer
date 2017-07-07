@@ -30,13 +30,13 @@ Let's build a simple package for this application, using as few tools and concep
 
 ## Creating the application
 
-First, create a directory for this tutorial and place the above application in `hello1.py`:
+First, create a directory for this tutorial and place the above application in `hello`:
 
 ~~~bash
 mkdir tutorial-1
 cd tutorial-1
-editor hello1.py   # put the above source code in this file
-chmod +x hello1.py
+editor hello   # put the above source code in this file
+chmod +x hello
 ~~~
 
 ## Creating the package root directory
@@ -57,14 +57,14 @@ editor packageroot/control
 This is what `DEBIAN/control` should contain:
 
 ~~~
-Package: hello1
+Package: hello
 Version: 1.0.0
 Architecture: all
 Maintainer: John Doe <john@doe.com>
 Depends: python
-Description: John's first hello package
- John's first hello package is written in Python
- and prints "hello 1".
+Description: John's hello package
+ John's hello package is written in Python
+ and prints a greeting.
  .
  It is awesome.
 ~~~
@@ -84,17 +84,17 @@ These are the meanings of the fields:
 
 ## Turning the package root directory into a package
 
-Next, let's define the package contents. All files under the package root directory, except for `DEBIAN`, is considered part of the content. We want hello1.py to be installed as /usr/bin/hello1.py, so:
+Next, let's define the package contents. All files under the package root directory, except for `DEBIAN`, is considered part of the content. We want `hello` to be installed as `/usr/bin/hello`, so:
 
 ~~~bash
 mkdir -p packageroot/usr/bin
-cp hello1.py packageroot/usr/bin/
+cp hello packageroot/usr/bin/
 ~~~
 
 Now that the package root directory is finished, we turn it into a .deb file:
 
 ~~~bash
-dpkg-deb -b packageroot hello1_1.0.0_all.deb
+dpkg-deb -b packageroot hello_1.0.0_all.deb
 ~~~
 
 ## Verifying that it works
@@ -102,8 +102,8 @@ dpkg-deb -b packageroot hello1_1.0.0_all.deb
 Success! You can now install the .deb file and verify that it works:
 
 ~~~
-$ sudo apt install -y ./hello1_1.0.0_all.deb
-$ hello1.py
+$ sudo apt install -y ./hello_1.0.0_all.deb
+$ hello
 hello 1
 ~~~
 

@@ -1,6 +1,13 @@
+.DS_Store
+.debhelper
 *.deb
 *.dsc
 *.build
 *.buildinfo
 *.changes
 *.tar.gz
+*.log
+*.substvars
+/*/debian/hello
+/*/debian/files
+/*/hello

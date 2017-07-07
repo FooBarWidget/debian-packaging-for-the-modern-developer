@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+clean:
+	make clean
+
+build:
+	make
+
+binary:
+	make install DESTDIR=debian/hello
+	env DH_VERBOSE=1 dh_strip
+	dh_gencontrol
+	dh_builddeb

@@ -1,6 +1,8 @@
 # Tutorial 2: building a binary package using dpkg-buildpackage
 
-Building a Debian package properly involves many different tools and concepts that build on top of each other. You have already been introduced to the lowest-level tool -- `dpkg-deb` -- in tutorial 1. In this tutorial we will teach you how to use a higher-level tool called `dpkg-buildpackage`, which uses dpkg-deb under the hood. The way we teach dpkg-buildpackage in this tutorial is not entirely the proper way to use it, but it's the easiest to learn. In later tutorials we teach more proper ways.
+Building a Debian package properly involves many different tools and concepts that build on top of each other. You have already been introduced to the lowest-level tool -- `dpkg-deb` -- in tutorial 1. In this tutorial we will teach you how to use a higher-level tool called `dpkg-buildpackage`, which uses dpkg-deb under the hood.
+
+The way we teach dpkg-buildpackage in this tutorial is not entirely the proper way to use it, but it's the easiest to learn. In later tutorials we teach more proper ways.
 
 **Table of contents**
 
@@ -36,7 +38,7 @@ If you're just packaging your own app, with no intention to submit your packages
 
 ## The dpkg-buildpackage workflow
 
-Let's say we have a hello world Python application named "hello2.py". It prints "hello 2" and we want it to be installed to /usr/bin.
+Let's say we have a hello world Python application named "hello". It prints "hello 2" and we want it to be installed to /usr/bin.
 
 dpkg-buildpackage requires you to specify:
 
@@ -47,7 +49,7 @@ dpkg-buildpackage requires you to specify:
 
 These specifications are stored in text files inside a directory named `debian`. This directory is expected to live inside the application's source directory. So the structure you end up with looks as follows:
 
-    hello2.py
+    hello
     ...and other application source files...
     debian/
         control
@@ -58,7 +60,7 @@ These specifications are stored in text files inside a directory named `debian`.
 
 Then you invoke dpkg-buildpackage (`dpkg-buildpackage -b`) from the application's source directory. Dpkg-buildpackage compiles the application using your instructions. It also creates the package root directory (under `debian/<source package name>`) and create files in there based on your instructions on how that should be done. At this point you end up with a structure like so:
 
-    hello2.py
+    hello
     ...and other application source files...
     debian/
         control
@@ -67,17 +69,17 @@ Then you invoke dpkg-buildpackage (`dpkg-buildpackage -b`) from the application'
         rules
         ...and other specification files...
 
-        hello2/   <--- this is the package root
+        hello/   <--- this is the package root
             DEBIAN/
                 control
                 ...and other metadata files...
             usr/
                 bin/
-                    hello2.py
+                    hello
 
 Finally, it performs a bunch more postprocessing and runs dpkg-deb to create the .deb file in the *parent* directory:
 
-    ../hello2_2.0.0_all.deb
+    ../hello_2.0.0_all.deb
 
 Now that you understand the workflow, let's make a package.
 
@@ -87,11 +89,12 @@ Create a directory for this tutorial. Inside the directory we place a simple hel
 
 ~~~bash
 mkdir tutorial-2
-editor hello2.py
-chmod +x hello2.py
+cd tutorial-2
+editor hello.py
+chmod +x hello.py
 ~~~
 
-hello2.py should contain:
+`hello` should contain:
 
 ~~~python
 #!/usr/bin/env python
@@ -104,7 +107,7 @@ Dpkg-buildpackage expects a package specification under a subdirectory named `de
 
  * `control` -- contains basic package metadata. It is similar to the one in tutorial 1, yet there are differences.
  * `changelog` -- contains a changelog of how the package has evolved over time. This is not just any plain text file -- it must conform to [a specific format](https://www.debian.org/doc/debian-policy/ch-source.html#s-dpkgchangelog) that specifies a list of changelog entries and version numbers. Counterintuitively, dpkg-buildpackage infers the package version number from this file, and *not* from a "Version" field in `control`!
- * `compat` -- specifies the minimum version of debhelper that your package needs. This probably means nothing to you right now, but that's fine, we'll get to this in a later tutorial. For now just understand that it must contain the magic number "9".
+ * `compat` -- specifies the minimum version of debhelper that your package needs. This probably means nothing to you right now, but that's fine, we'll get to this in tutorial 3. For now just understand that it must contain the magic number "9".
  * `rules` -- a file, in `Makefile` format, that specifies how your application must be compiled and how the package root directory should be created.
 
 There are also other possible files, but we'll get to them in later tutorials.
@@ -114,36 +117,39 @@ There are also other possible files, but we'll get to them in later tutorials.
 Put this in the control file:
 
 ~~~
-Source: hello2
+Source: hello
+Section: devel
+Priority: optional
 Maintainer: John Doe <john@doe.com>
 
-Package: hello2
+Package: hello
 Architecture: all
 Depends: python
-Description: John's second hello package
- John's second hello package is written in Python
- and prints "hello 2".
+Description: John's hello package
+ John's package is written in Python
+ and prints a greeting.
  .
  It is awesome.
 ~~~
 
 Note the differences from tutorial 1:
 
- * We name this package "hello2" instead of "hello1".
  * A new section had been added at the beginning of the file. This section is called the *source section*, while the section at the end is called the *package section*.
+ * A "Section" field has been added. It specifies which category this package falls in. In our case, we specify "devel" as in "developer tools". See [the Debian Policy Manual](https://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections) for a listing of section names.
+ * A "Priority" field has been added. It specifies which [how important](https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities) this package is.
  * The "Version" field is gone. As explained above, dpkg-buildpackage infers the version number from the changelog file.
  * The "Maintainer" field has been moved from the package section to the source section.
 
-The "Source" field specifies the name of the source package, which may be distinct from the name of the binary package. A source package is a special kind of Debian package that does not contain binaries, but source code and packaging specification files, allowing anybody to build a binary package in a fully reproducible manner. Source packages will be covered in a later tutorial. For now, let's give the source package and the binary package the same name: "hello2".
+The "Source" field specifies the name of the source package, which may be distinct from the name of the binary package. A source package is a special kind of Debian package that does not contain binaries, but source code and packaging specification files, allowing anybody to build a binary package in a fully reproducible manner. Source packages will be covered in a later tutorial. For now, let's give the source package and the binary package the same name: "hello".
 
 ### `debian/changelog`
 
 Put this in the changelog file:
 
 ~~~
-hello2 (2.0.0) stretch; urgency=medium
+hello (2.0.0) stretch; urgency=medium
 
-  * Initial packaging work.
+  * Initial packaging work with dpkg-buildpackage.
 
  -- John Doe <john@doe.com>  Thu, 06 Jul 2017 09:19:24 +0000
 ~~~
@@ -166,7 +172,7 @@ Tip: you can obtain the current date in RFC 2822 format by running:
 
 ### `debian/compat`
 
-We'll explain this file in a later tutorial. For now just understand that it must contain the magic number "9".
+We'll explain this file in tutorial 3. For now just understand that it must contain the magic number "9".
 
 ~~~bash
 echo 9 > debian/compat
@@ -178,13 +184,13 @@ The rules file is a Makefile. Dpkg-buildpackage expects this file to contain thr
 
  * `clean` -- remove all compilation products.
  * `build` -- compile the application.
- * `binary` -- create a package root directory. This directory is expected to have the filename `debian/<source package name>`, so in this case `debian/hello2`.
+ * `binary` -- create a package root directory. This directory is expected to have the filename `debian/<source package name>`, so in this case `debian/hello`.
 
 All of these targets are invoked from the application source directory, as described in section [The dpkg-buildpackage workflow](#the-dpkg-buildpackage-workflow).
 
 Put this in the rules file:
 
-~~~make
+~~~Makefile
 #!/usr/bin/make -f
 
 clean:
@@ -194,21 +200,23 @@ build:
 	@# Do nothing
 
 binary:
-	mkdir -p debian/hello2
-	mkdir -p debian/hello2/usr/bin
-	cp hello2.py debian/hello2/usr/bin/
+	mkdir -p debian/hello
+	mkdir -p debian/hello/usr/bin
+	cp hello debian/hello/usr/bin/
 	dh_gencontrol
 	dh_builddeb
 ~~~
 
-Since hello2 is a Python application, there are no `clean` and `build` steps.
+Since `hello` is a Python application, there are no `clean` and `build` steps.
 
 The `binary` step begins with a bunch of commands that create the package root directory and that populate it with files.
 
 The `binary` step then ends with some boilerplate commands:
 
- * `dh_gencontrol` creates a `DEBIAN/control` file inside a package root directory. The control file in there is a bit postprocessed, so it contains some fields (e.g. an Installed-Size field) which you did not specify yourself but which is automatically inferred.
- * `dh_builddeb` invokes dpkg-deb to create the .deb file from the package root directory.
+ * `dh_gencontrol` is a debhelper command which creates a `DEBIAN/control` file inside a package root directory. It takes the `debian/control` file that we wrote, performs some postprocessing (performs substitutions and adds some more fields) and writes the result to `debian/hello/DEBIAN/control`. For example, it automatically infers the size of the `debian/hello` directory and adds the "Installed-Size" field for you.
+ * `dh_builddeb` is a debhelper command which invokes dpkg-deb to create the .deb file from the package root directory.
+
+You will learn more about debhelper in tutorial 3.
 
 ## Building the package
 
@@ -220,16 +228,22 @@ dpkg-buildpackage -b
 
 The `-b` flag tells dpkg-buildpackage to build a binary package.
 
+As you can see from dpkg-buildpackage's output, it runs the 'rules' makefile's three targets:
+
+![](dpkg-buildpackage.png)
+
 ## Verifying that it works
 
 When done, you will end up with a .deb file in the *parent* directory. Install it and verify that it works:
 
 ~~~bash
-$ sudo apt install -y ../hello2_2.0.0_all.deb
-$ hello2.py
+$ sudo apt install -y ../hello_2.0.0_all.deb
+$ hello
 hello 2
 ~~~
 
 ## Conclusion
 
-Congratulations, you have learned how to use the dpkg-buildpackage workflow and structure to build a binary package! However this only concludes the beginning of your journey. The way we taught you use dpkg-buildpackage is still not the most proper way to build a package, but we'll get to that in later tutorials.
+Congratulations, you have learned how to use the dpkg-buildpackage workflow and structure to build a binary package! However this only concludes the beginning of your journey. We taught you how to use dpkg-buildpackage to build a binary package directly, but the proper way of Debian package building involves orig tarballs, source packages and debhelper. Furthermore, we've only packaged Python applications so far, which do not require compilation. Packaging compiled applications is a bit more involved.
+
+We'll explain orig tarballs and source packages in later tutorials. In the next tutorial, let's have a look at how we can package a C application, and what debhelper is. You will learn what the mysterious `debian/compat` file is and what the `dh_*` boilerplate commands do.

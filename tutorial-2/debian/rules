@@ -7,8 +7,8 @@ build:
 	@# Do nothing
 
 binary:
-	mkdir -p debian/hello2
-	mkdir -p debian/hello2/usr/bin
-	cp hello2.py debian/hello2/usr/bin/
+	mkdir -p debian/hello
+	mkdir -p debian/hello/usr/bin
+	cp hello debian/hello/usr/bin/
 	dh_gencontrol
 	dh_builddeb
