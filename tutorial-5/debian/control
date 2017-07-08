@@ -1,0 +1,14 @@
+Source: hello
+Section: devel
+Priority: optional
+Maintainer: John Doe <john@doe.com>
+Build-Depends: golang, debhelper (>= 9)
+
+Package: hello
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: John's hello package
+ John's package is written in Go
+ and prints a greeting.
+ .
+ It is awesome.

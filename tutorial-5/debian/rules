@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	go clean
+
+override_dh_auto_build:
+	go build hello.go
+
+override_dh_auto_install:
+	mkdir -p debian/hello/usr/bin
+	cp hello.go debian/hello/usr/bin/

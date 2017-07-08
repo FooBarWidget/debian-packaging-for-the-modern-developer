@@ -1,0 +1,23 @@
+hello (5.0.0-1) stretch; urgency=medium
+
+  * Application is now written in Go.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
+
+hello (3.0.0-2) stretch; urgency=medium
+
+  * Made full use of debhelper.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
+
+hello (3.0.0-1) stretch; urgency=medium
+
+  * Rewrote application in C.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
+
+hello (2.0.0-1) stretch; urgency=medium
+
+  * Initial packaging work with dpkg-buildpackage.
+
+ -- John Doe <john@doe.com>  Thu, 06 Jul 2017 09:19:24 +0000
