@@ -1,0 +1,14 @@
+version: "2.2"
+services:
+  playground:
+    build: docker-env
+    init: true
+    image: dpmd/playground
+    command: sudo -u app -H bash
+    cap_add:
+      # For bindfs
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    volumes:
+      - ".:/host.real"

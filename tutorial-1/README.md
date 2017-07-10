@@ -19,6 +19,7 @@ Let's build a simple package for this application, using as few tools and concep
 
 **Table of contents**
 
+ * [Installing packaging tools](#installing-packaging-tools)
  * [Creating the application](#creating-the-application)
  * [Creating the package root directory](#creating-the-package-root-directory)
    - [Control file fields](#control-file-fields)
@@ -28,6 +29,12 @@ Let's build a simple package for this application, using as few tools and concep
  * [Conclusion](#conclusion)
 
 ---
+
+## Installing packaging tools
+
+~~~bash
+apt install devscripts
+~~~
 
 ## Creating the application
 
