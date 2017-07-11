@@ -6,10 +6,10 @@ There is a better way: you can override parts of debhelper while still allowing 
 
 **Table of contents**
 
- * [The debhelper pipeline]()
-   - [The `clean` pipeline]
-   - [The `build` pipeline]
-   - [The `binary` pipeline]
+ * [The debhelper pipeline system](#the-debhelper-pipeline-system)
+   - [The `clean` pipeline](#the-clean-pipeline)
+   - [The `build` pipeline](#the-build-pipeline)
+   - [The `binary` pipeline](#the-binary-pipeline)
    - [Notes](#notes)
  * [Our application and its custom build system](#our-application-and-its-custom-build-system)
  * [Overriding debhelper steps](#overriding-debhelper-steps)
@@ -19,7 +19,7 @@ There is a better way: you can override parts of debhelper while still allowing 
 
 ---
 
-## The debhelper pipeline
+## The debhelper pipeline system
 
 Think of debhelper as a pipeline system. There are three pipelines: `clean`, `build` and `binary`, which correspond to the three `rules` makefile targets. Each pipeline calls a number of steps serially, with each step usually being a command invocation.
 
