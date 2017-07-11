@@ -4,11 +4,10 @@
 	dh $@
 
 override_dh_auto_clean:
-	go clean
+	./clean.sh
 
 override_dh_auto_build:
-	go build hello.go
+	./build.sh
 
 override_dh_auto_install:
-	mkdir -p debian/hello/usr/bin
-	cp hello.go debian/hello/usr/bin/
+	env DESTDIR=debian/hello ./install.sh

@@ -52,7 +52,7 @@ DPMD consists of tutorials that teach you step-by-step how all the different con
  * Tutorial 2: building a binary package using dpkg-buildpackage
  * Tutorial 3: packaging a compiled application, introducing debhelper
  * Tutorial 4: making full use of debhelper
- * Tutorial 5: customizing debhelper behavior
+ * Tutorial 5: the debhelper pipeline and customizing debhelper steps
 
 ### Intermediate
 

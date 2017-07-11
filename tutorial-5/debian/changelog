@@ -1,8 +1,8 @@
 hello (5.0.0-1) stretch; urgency=medium
 
-  * Application is now written in Go.
+  * Support custom build system.
 
- -- John Doe <john@doe.com>  Thu, 06 Jul 2017 13:59:26 +0000
+ -- John Doe <john@doe.com>  Tue, 11 Jul 2017 16:34:17 +0000
 
 hello (3.0.0-2) stretch; urgency=medium
 

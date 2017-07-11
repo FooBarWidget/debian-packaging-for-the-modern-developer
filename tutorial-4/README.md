@@ -191,3 +191,5 @@ So the above rules file simply forwards all make commands to debhelper. It is se
 Congratulations, you're now making full use of debhelper. And on the side you have also learned when is an appropriate time to bump the Debian package revision number but not the application version number.
 
 But what do you do when debhelper doesn't do the right thing, for example when your application is using a custom build system that debhelper does not recognize? Do you fall back to not using debhelper as much, like you did in tutorial 3? There is a better way, which you will learn in the next tutorial.
+
+The next tutorial will dive deeper into debhelper. You will learn that debhelper is a pipeline system, what all the different pipeline steps in debhelper do, and how to customize the pipeline.
