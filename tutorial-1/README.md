@@ -15,11 +15,10 @@ Let's say you have a hello world application written in Python. It's only job is
 print("hello 1.0.0")
 ~~~
 
-Let's build a simple package for this application, using as few tools and concepts as possible. This is not the proper way to build a package, but it helps you understand what a package is and how the basic process works. The fully proper way to build a package is quite complicated and involves many tools and concepts that build on top of each other.
+Let's build a simple package for this application, using as few tools and concepts as possible. This is not the proper way to build a package, but it helps you understand what a package is and how the basic process works. The fully proper way to build a package is quite complicated and involves many tools and concepts that build on top of each other, which we will get to in later tutorials.
 
 **Table of contents**
 
- * [Installing packaging tools](#installing-packaging-tools)
  * [Creating the application](#creating-the-application)
  * [Creating the package root directory](#creating-the-package-root-directory)
    - [Control file fields](#control-file-fields)
@@ -29,12 +28,6 @@ Let's build a simple package for this application, using as few tools and concep
  * [Conclusion](#conclusion)
 
 ---
-
-## Installing packaging tools
-
-~~~bash
-apt install devscripts
-~~~
 
 ## Creating the application
 
@@ -49,7 +42,7 @@ chmod +x hello
 
 ## Creating the package root directory
 
-Now that we have an application, let's build a package. The simplest application that builds a package is `dpkg-deb`. It accepts a directory containing package metadata files and content files. Let's create this directory. We call it `packageroot` but it can have any name.
+Now that we have an application, let's build a package. The simplest tool for building a .deb file is `dpkg-deb`. It accepts a directory containing package metadata files and content files. Let's create this directory. We call it `packageroot` but it can have any name.
 
 ~~~bash
 mkdir packageroot
@@ -59,7 +52,7 @@ The package metadata must live in a file called `DEBIAN/control` under the packa
 
 ~~~bash
 mkdir packageroot/DEBIAN
-editor packageroot/control
+editor packageroot/DEBIAN/control
 ~~~
 
 This is what `DEBIAN/control` should contain:
@@ -119,7 +112,7 @@ dpkg-deb -b packageroot hello_1.0.0_all.deb
 Success! You can now install the .deb file and verify that it works:
 
 ~~~
-$ sudo apt install -y ./hello_1.0.0_all.deb
+$ sudo gdebi -n ./hello_1.0.0_all.deb
 $ hello
 hello 1.0.0
 ~~~
@@ -143,4 +136,4 @@ Under the DEBIAN/ subdirectory you will find our control file, while under the C
 
 A Debian package is an archive file that contains metadata (such as name, dependencies, description) and files. You have learned how to write a basic metadata specification file (the `control` file) and you have learned how this, combined with the actual files that you want the package to contain, can be turned into a .deb file using `dpkg-deb`. You have also learned how to inspect the insides of a .deb file
 
-But as mentioned earlier, using `dpkg-deb` like this is not the *proper* way to make a package. In the next tutorial we will learn why, and what is a more proper (but still not fully proper) way.
+But as mentioned earlier, using `dpkg-deb` like this is not the *proper* way to make a package. In the next tutorial we will learn why, and what is a more proper way.

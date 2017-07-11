@@ -45,7 +45,7 @@ hello.c must contain:
 
 int
 main() {
-	printf("hello 3\n");
+	printf("hello 3.0.0\n");
 	return 0;
 }
 ~~~
@@ -148,7 +148,7 @@ binary:
 
 ~~~
 $ dpkg-buildpackage -b
-$ sudo apt install -y ../hello_3.0.0-2_<ARCH>.deb
+$ sudo gdebi -n ../hello_3.0.0-2_<ARCH>.deb
 $ hello
 hello 3.0.0
 ~~~

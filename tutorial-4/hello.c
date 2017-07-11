@@ -2,6 +2,6 @@
 
 int
 main() {
-	printf("hello 3\n");
+	printf("hello 3.0.0\n");
 	return 0;
 }

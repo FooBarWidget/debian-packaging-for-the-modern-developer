@@ -2,8 +2,6 @@
 
 Building a Debian package properly involves many different tools and concepts that build on top of each other. You have already been introduced to the lowest-level tool -- `dpkg-deb` -- in tutorial 1. In this tutorial we will teach you how to use a higher-level tool called `dpkg-buildpackage`, which uses dpkg-deb under the hood.
 
-The way we teach dpkg-buildpackage in this tutorial is not entirely the proper way to use it, but it's the easiest to learn. In later tutorials we teach more proper ways.
-
 **Table of contents**
 
  * [Why dpkg-buildpackage?](#why-dpkg-buildpackage)
@@ -25,16 +23,17 @@ The way we teach dpkg-buildpackage in this tutorial is not entirely the proper w
 Debian has some pretty detailed rules on what a "proper" Debian package looks like. These rules are specified in the [Debian Policy Manual](https://www.debian.org/doc/debian-policy/). All packages submitted to Debian's (and Ubuntu's) repositories must adhere to these rules. For example:
 
  * all packages are expected to contain basic documentation (even documentation on the packaging itself) in /usr/share/doc.
- * they are expected to be signed with digital signatures; they are expected to conform to the [Filesystem Hierarchy Standard](https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.1).
+ * they are expected to be signed with digital signatures
+ * they are expected to conform to the [Filesystem Hierarchy Standard](https://www.debian.org/doc/debian-policy/ch-opersys.html#s9.1).
  * they are expected to include Systemd service units where applicable.
  * they are expected to exclude debugging information from all C/C++ binaries.
  * RubyGems and NPM modules are expected to live in very specific directories
 
 ...etcetera.
 
-dpkg-buildpackage helps you conform to these rules by allowing you to do certain things automatically in a manner that conforms to the rules. In return, it enforces a specific workflow and a specific structure for your package specification files. This workflow and these structures take a while to learn compared to just using dpkg-deb.
+Debian provides tools that help you conform to such rules (the most important one is debhelper, which we will describe in tutorial 3). But these tools depend on a specific workflow and a specific structure for your package specification. dpkg-buildpackage is a tool that enforces said workflow and structure. Dpkg-buildpackage replaces dpkg-deb: it calls dpkg-deb under the hood.
 
-If you're just packaging your own app, with no intention to submit your packages to the Debian/Ubuntu repositories, then you may wonder why you should care about dpkg-buildpackage instead of continuing to use dpkg-deb. The answer is tooling: pretty much all Debian packaging tools expect you to follow the dpkg-buildpackage workflow/structure. There are tools that check for common problems in packages; tools that help you build packages for multiple distributions and architectures from a single computer; tools that help you sign packages; and much more.
+But this workflow and these structures take a while to learn compared to just using dpkg-deb. If you're just packaging your own app, with no intention to submit your packages to the Debian/Ubuntu repositories, then you may wonder why you should care about dpkg-buildpackage instead of continuing to use dpkg-deb. The answer is tooling: pretty much all Debian packaging tools expect you to follow the dpkg-buildpackage workflow/structure. There are tools that check for common problems in packages; tools that help you build packages for multiple distributions and architectures from a single computer; tools that help you sign packages; and much more.
 
 ## The dpkg-buildpackage workflow
 
@@ -76,6 +75,7 @@ Then you invoke dpkg-buildpackage (`dpkg-buildpackage -b`) from the application'
             usr/
                 bin/
                     hello
+            ...and other application files...
 
 Finally, it performs a bunch more postprocessing and runs dpkg-deb to create the .deb file in the *parent* directory:
 
@@ -85,7 +85,7 @@ Now that you understand the workflow, let's make a package.
 
 ## Preparing the application
 
-Create a directory for this tutorial. Inside the directory we place a simple hello world application, but we call this version 2.
+Create a directory for this tutorial. Inside the directory we place our simple hello world 2.0.0 application.
 
 ~~~bash
 mkdir tutorial-2
@@ -110,7 +110,7 @@ Dpkg-buildpackage expects a package specification under a subdirectory named `de
  * `compat` -- specifies the minimum version of debhelper that your package needs. This probably means nothing to you right now, but that's fine, we'll get to this in tutorial 3. For now just understand that it must contain the magic number "9".
  * `rules` -- a file, in `Makefile` format, that specifies how your application must be compiled and how the package root directory should be created.
 
-There are also other possible files, but we'll get to them in later tutorials, such as tutorial 7.
+There are also [other possible files](https://www.debian.org/doc/manuals/maint-guide/dother.en.html), but we'll get to them in later tutorials, such as tutorial 7.
 
 ### `debian/control`
 
@@ -121,6 +121,7 @@ Source: hello
 Section: devel
 Priority: optional
 Maintainer: John Doe <john@doe.com>
+Build-Depends: debhelper (>= 9)
 
 Package: hello
 Architecture: all
@@ -137,10 +138,11 @@ Note the differences from tutorial 1:
  * A new section had been added at the beginning of the file. This section is called the *source section*, while the section at the end is called the *package section*.
  * A "Section" field has been added. It specifies which category this package falls in. In our case, we specify "devel" as in "developer tools". See [the Debian Policy Manual](https://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections) for a listing of section names.
  * A "Priority" field has been added. It specifies which [how important](https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities) this package is.
+ * A "Build-Depends" field has been added. Build-depends will be explained in tutorial 3, and the fact that we build-depend on debhelper will also be explained.
  * The "Version" field is gone. As explained above, dpkg-buildpackage infers the version number from the changelog file.
  * The "Maintainer" field has been moved from the package section to the source section.
 
-The "Source" field specifies the name of the source package, which may be distinct from the name of the binary package. A source package is a special kind of Debian package that does not contain binaries, but source code and packaging specification files, allowing anybody to build a binary package in a fully reproducible manner. Source packages will be covered in a later tutorial. For now, let's give the source package and the binary package the same name: "hello".
+The "Source" field specifies the name of the source package, which may be distinct from the name of the binary package. A source package is a special kind of Debian package that does not contain binaries, but source code and packaging specification files, allowing anybody to build a binary package in a fully reproducible manner. Source packages will be covered in tutorial 6. For now, let's give the source package and the binary package the same name: "hello".
 
 ### `debian/changelog`
 
@@ -154,7 +156,7 @@ hello (2.0.0-1) stretch; urgency=medium
  -- John Doe <john@doe.com>  Thu, 06 Jul 2017 09:19:24 +0000
 ~~~
 
-The changelog file conform to [a specific format](https://www.debian.org/doc/debian-policy/ch-source.html#s-dpkgchangelog) and contains a list of changelog entries. In this case, the changelog file only contains one such entry. The first line of the entry must be in the format of:
+The changelog file must conform to [a specific format](https://www.debian.org/doc/debian-policy/ch-source.html#s-dpkgchangelog) and is to contain a list of changelog entries. In this case, the changelog file only contains one such entry. The first line of the entry must be in the format of:
 
     <source package name> (<version number>) <distribution name>; urgency=<urgency>
 
@@ -213,7 +215,7 @@ The `binary` step begins with a bunch of commands that create the package root d
 
 The `binary` step then ends with some boilerplate commands:
 
- * `dh_gencontrol` is a debhelper command which creates a `DEBIAN/control` file inside a package root directory. It takes the `debian/control` file that we wrote, performs some postprocessing (performs substitutions and adds some more fields) and writes the result to `debian/hello/DEBIAN/control`. For example, it automatically infers the size of the `debian/hello` directory and adds the "Installed-Size" field for you.
+ * `dh_gencontrol` is a debhelper command which creates a `DEBIAN/control` file inside the package root directory. It takes the `debian/control` file that we wrote, performs some postprocessing (performs substitutions and adds some more fields) and writes the result to `debian/hello/DEBIAN/control`. For example, it automatically infers the size of the `debian/hello` package root directory and adds the "Installed-Size" field for you.
  * `dh_builddeb` is a debhelper command which invokes dpkg-deb to create the .deb file from the package root directory.
 
 You will learn more about debhelper in tutorial 3.
@@ -237,13 +239,11 @@ As you can see from dpkg-buildpackage's output, it runs the 'rules' makefile's t
 When done, you will end up with a .deb file in the *parent* directory. Install it and verify that it works:
 
 ~~~bash
-$ sudo apt install -y ../hello_2.0.0-1_all.deb
+$ sudo gdebi -n ../hello_2.0.0-1_all.deb
 $ hello
 hello 2.0.0
 ~~~
 
 ## Conclusion
 
-Congratulations, you have learned how to use the dpkg-buildpackage workflow and structure to build a binary package! However this only concludes the beginning of your journey. We taught you how to use dpkg-buildpackage to build a binary package directly, but the proper way of Debian package building involves orig tarballs, source packages and debhelper. Furthermore, we've only packaged Python applications so far, which do not require compilation. Packaging compiled applications is a bit more involved.
-
-We'll explain orig tarballs and source packages in later tutorials, such as tutorial 6. In the next tutorial, let's have a look at how we can package a C application, and what debhelper is. You will learn what the mysterious `debian/compat` file is and what the `dh_*` boilerplate commands do.
+Congratulations, you have learned how to use the dpkg-buildpackage workflow and structure to build a binary package! However this only concludes the beginning of your journey. In the next tutorial, let's have a look at how we can package a C application, and introduce you to debhelper. Debhelper is an important tool in the Debian packaging toolchain and you will use it often. You will learn what the mysterious `debian/compat` file is and what the `dh_*` boilerplate commands do.

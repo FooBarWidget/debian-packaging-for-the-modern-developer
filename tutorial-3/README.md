@@ -45,7 +45,7 @@ hello.c must contain:
 
 int
 main() {
-	printf("hello 3\n");
+	printf("hello 3.0.0\n");
 	return 0;
 }
 ~~~
@@ -73,7 +73,7 @@ Compile the application with make and verify that it works:
 ~~~
 $ make
 $ ./hello
-hello 3
+hello 3.0.0
 ~~~
 
 ## Creating the `debian/` subdirectory
@@ -105,13 +105,17 @@ Compared to tutorial 2 we have made the following changes:
 
    In our case, we specify build-essential because we need a C compiler, and debhelper at least version 9.
 
-   `dpkg-buildpackage` checks whether all Build-Dependencies are installed, and refuses to continue if any is missing. There are even tools out there which will automatically install all Build-Dependencies; you will learn these tools in later tutorials.
+   `dpkg-buildpackage` checks whether all Build-Dependencies are installed, and refuses to continue if any is missing. There are even [tools out there which will automatically install all Build-Dependencies](http://manpages.ubuntu.com/manpages/xenial/man1/mk-build-deps.1.html); you will learn these tools in later tutorials.
 
  * Changed the "Architecture" field from "all" (package works on all architectures, does not require compilation) to "any" (package can be compiled for any Debian/Ubuntu-supported architecture).
 
  * Removed the Python dependency.
 
- * Added two dependencies: `${shlibs:Depends}, ${misc:Depends}`. These are magic keywords that are substituted by `dh_gencontrol`. `dh_gencontrol` scans all the binary files in our package root directory, automatically infers any shared library dependencies that they have, and assigns them to these variables. Our example program is a C program, so it depends on glibc. Indeed, `dh_gencontrol` substitutes these keywords with "glibc".
+ * Added two dependencies: `${shlibs:Depends}, ${misc:Depends}`. These are magic keywords that are substituted by `dh_makeshlibs` and `dh_gencontrol`.
+
+   `dh_makeshlib` scans all the binary files in our package root directory, automatically infers any shared library dependencies that they have, and assigns them to these variables. When `dh_gencontrol` generates a control file, it substitutes these variables using the information inferred by `dh_makeshlibs`.
+
+   Our example program is a C program, so it depends on glibc. Indeed, `dh_gencontrol` substitutes these keywords with "glibc".
 
  * Updated the description.
 
@@ -158,7 +162,7 @@ build:
 
 binary:
 	make install DESTDIR=debian/hello
-	dh_strip
+	strip --strip-all debian/hello/usr/bin/hello
 	dh_makeshlibs
 	dh_gencontrol
 	dh_builddeb
@@ -166,29 +170,23 @@ binary:
 
 The `clean` and `build` targets are pretty straightforward: they just invoke the application's own build system's Makefile to do the corresponding jobs.
 
-The `binary` target first calls `make install`, but also passes the DESTDIR variable (which the application's own Makefile respects) to ensure that it installs into debian/hello3/usr/bin instead of /usr/bin.
+The `binary` target first calls `make install`, but also passes the DESTDIR variable (which the application's own Makefile respects) to ensure that it installs into debian/hello/usr/bin instead of /usr/bin.
 
-Next, it calls `dh_strip`, which scans the package root directory for binary files and extracts their debugging symbols into external files. Here is a surprise: calling `dh_strip` is actually *required* when packaging C applications or other applications whose binaries can contain debugging symbols. You will learn why in subsection "Debugging symbol packages".
+Next, it calls `strip` which strips debugging symbols from the `hello` binary. Stripping debugging symbols is a good idea because users are probably never going to debug packaged apps.
 
-Next, it calls `dh_makeshlibs` which scans binaries to find out what shared libraries they depend on. The information is used for substituting `${shlibs:Depends}, ${misc:Depends}` in the control file.
+Then it calls `dh_makeshlibs` which scans binaries to find out what shared libraries they depend on. The information is used for substituting `${shlibs:Depends}, ${misc:Depends}` in the control file.
 
-Finally, it calls `dh_gencontrol` and `dh_builddeb` to generate two .deb package files: `hello_3.0.0_<ARCH>.deb` and `hello-dbgsym_3.0.0_<ARCH>.deb`.
-
-## Debugging symbol packages
-
-The Debian packaging tooling require debugging symbols to be extracted from the binaries into separate `-dbgsym` subpackages. For example bash's debug symbols are stored in a package named bash-dbgsym. Normal users won't ever debug your applications, but sometimes it is necessary, so it makes sense to split debugging symbols into a separate package.
-
-`dh_builddeb` will automatically try to generate to the `-dbgsym` subpackage if it detects any binaries with debugging symbols. It expects the debugging symbols to already have been extracted into the following directory: `debian/.debhelper/hello/dbgsym-root`. And that is exactly what `dh_strip` did. If we omit the call to `dh_strip` then `dh_builddeb` will fail.
-
-This illustrates that **some Debhelper tools depend on other Debhelper tools**. This is why most Debian packages delegate as much work as possible to debhelper, instead of only picking specific parts of debhelper, which is what we did in this tutorial.
+Finally, it calls `dh_gencontrol` and `dh_builddeb` to generate our .deb files: `hello_3.0.0_<ARCH>.deb`.
 
 ## Building the package
+
+Run:
 
 ~~~bash
 dpkg-buildpackage -b
 ~~~
 
-### What is debhelper doing under the hood?
+### Examening debhelper's behavior
 
 Curious about what debhelper is doing? Set the environment variable `DH_VERBOSE=1` and will tell you all the commands that it executes under the hood. Let's give it a try:
 
@@ -199,46 +197,46 @@ env DH_VERBOSE=1 dpkg-buildpackage -b
 Here is a part of the output:
 
 ~~~
-dh_strip
-	install -d debian/.debhelper/hello/dbgsym-root/usr/lib/debug/.build-id/d5
-	objcopy --only-keep-debug --compress-debug-sections debian/hello/usr/bin/hello debian/.debhelper/hello/dbgsym-root/usr/lib/debug/.build-id/d5/2d3d6a2dc05d9beac28af2f7cc98ea5e1ca12d.debug
-	chmod 0644 -- debian/.debhelper/hello/dbgsym-root/usr/lib/debug/.build-id/d5/2d3d6a2dc05d9beac28af2f7cc98ea5e1ca12d.debug
-	chown 0:0 -- debian/.debhelper/hello/dbgsym-root/usr/lib/debug/.build-id/d5/2d3d6a2dc05d9beac28af2f7cc98ea5e1ca12d.debug
-	strip --remove-section=.comment --remove-section=.note debian/hello/usr/bin/hello
-	objcopy --add-gnu-debuglink debian/.debhelper/hello/dbgsym-root/usr/lib/debug/.build-id/d5/2d3d6a2dc05d9beac28af2f7cc98ea5e1ca12d.debug debian/hello/usr/bin/hello
-	install -d debian/.debhelper/hello/dbgsym-root/usr/share/doc
-	ln -s hello debian/.debhelper/hello/dbgsym-root/usr/share/doc/hello-dbgsym
-dh_gencontrol
-	install -d debian/hello/DEBIAN
-	echo misc:Depends= >> debian/hello.substvars
-	echo misc:Pre-Depends= >> debian/hello.substvars
-	install -d debian/.debhelper/hello/dbgsym-root/DEBIAN
-	dpkg-gencontrol -phello -ldebian/changelog -Tdebian/hello.substvars -Pdebian/.debhelper/hello/dbgsym-root -UPre-Depends -URecommends -USuggests -UEnhances -UProvides -UEssential -UConflicts -DPriority=extra -DAuto-Built-Package=debug-symbols -DPackage=hello-dbgsym "-DDepends=hello (= \${binary:Version})" "-DDescription=Debug symbols for hello" -DBuild-Ids=d52d3d6a2dc05d9beac28af2f7cc98ea5e1ca12d -DSection=debug -UMulti-Arch -UReplaces -UBreaks
-dpkg-gencontrol: warning: Depends field of package hello: unknown substitution variable ${shlibs:Depends}
-	chmod 0644 -- debian/.debhelper/hello/dbgsym-root/DEBIAN/control
-	chown 0:0 -- debian/.debhelper/hello/dbgsym-root/DEBIAN/control
+ debian/rules binary                                        <--- (1)
+make install DESTDIR=debian/hello                           <--- (2)
+make[1]: Entering directory '/host/tutorial-3'
+mkdir -p debian/hello/usr/bin
+cp hello debian/hello/usr/bin/hello
+make[1]: Leaving directory '/host/tutorial-3'
+strip --strip-all debian/hello/usr/bin/hello                <--- (3)
+dh_makeshlibs                                               <--- (4)
+	rm -f debian/hello/DEBIAN/shlibs
+dh_gencontrol                                               <--- (5)
 	dpkg-gencontrol -phello -ldebian/changelog -Tdebian/hello.substvars -Pdebian/hello
 dpkg-gencontrol: warning: Depends field of package hello: unknown substitution variable ${shlibs:Depends}
-	chmod 0644 -- debian/hello/DEBIAN/control
-	chown 0:0 -- debian/hello/DEBIAN/control
-dh_builddeb
-	dpkg-deb -z1 -Zxz -Sextreme --build debian/.debhelper/hello/dbgsym-root ..
+	chmod 644 debian/hello/DEBIAN/control
+	chown 0:0 debian/hello/DEBIAN/control
+dh_builddeb                                                 <--- (6)
+	dpkg-deb --build debian/hello ..
+dpkg-deb: building package `hello' in `../hello_3.0.0-1_amd64.deb'.
+ dpkg-genchanges -b >../hello_3.0.0-1_amd64.changes
+dpkg-genchanges: binary-only upload (no source code included)
+ dpkg-source --after-build tutorial-3
+dpkg-buildpackage: binary-only upload (no source included)
 ~~~
 
-As you can see, `dh_strip` calls `objcopy` and `strip` to extract debugging symbols to external files.
+How do you read all this?
 
-`dh_gencontrol` uses `dpkg-gencontrol` under the hood to to create `debian/hello/DEBIAN/control`.
-
-`dh_debbuild` uses `dpkg-deb` under the hood.
+ 1. Let's begin with the `debian/rules binary` line: this line says that dpkg-buildpackage invokes the debian/rules makefile with the 'binary' target. The lines that follow, indicate what happened inside this target.
+ 2. The rules makefile calls `make install`. The next few lines that follow are simply `make install`'s output.
+ 3. The rules makefile calls `strip`.
+ 4. The rules makefile calls `dh_makeshlib`. The next line shows one of the things that `dh_makeshlib` does, namely removing an `shlibs` file. It also generates a new such file but does not print that.
+ 5. The rules makefile calls `dh_gencontrol`. The next lines show that it calls `dpkg-gencontrol` under the hood, that dpkg-gencontrol prints a warning (which we can safely ignore) and that `dh_gencontrol` chmods a bunch of files.
+ 6. The rules makefile calls `dh_builddeb`. We see that it calls `dpkg-deb` and a bunch of other tools under the hood.
 
 ## Verifying that it works
 
 When done, you will end up with two .deb files in the parent directory. Install the main one (not the -dbgsym one) and verify that it works:
 
 ~~~bash
-$ sudo apt install -y ../hello_3.0.0_<ARCH>.deb
+$ sudo gdebi -n ../hello_3.0.0_<ARCH>.deb
 $ hello
-hello 3
+hello 3.0.0
 ~~~
 
 ## Conclusion
@@ -246,6 +244,6 @@ hello 3
 In this tutorial you have learned how to package an application that requires compilation. It involves:
 
  * Modifying the `rules` file to call whatever commands are necessary to compile the application and to install it into the package root directory.
- * Modifying the `control` file to add a few magic pakcages dependency keywords, build dependencies, and architecture information.
+ * Modifying the `control` file to add a few packages dependency substitution keywords, build dependencies, and architecture information.
 
 You have also learned what debhelper is, how it relates to the mysterious `control/compat` file, and how you can see what debhelper is doing. But so far we have only used debhelper as minimally as is necessary to learn how it works. In the next tutorial we will show you how to make full use of debhelper, to the extent that debhelper may look like magic to those who haven't read this tutorial 3.

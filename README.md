@@ -44,6 +44,7 @@ DPMD consists of tutorials that teach you step-by-step how all the different con
 ### Preparation
 
  * Required prior knowledge, preparing the tutorial environment
+ * Debian packaging concepts and workflow in a nutshell
 
 ### Basics
 
