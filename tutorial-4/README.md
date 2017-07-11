@@ -4,7 +4,7 @@ In tutorial 3 you have learned how to package an application that requires compi
 
 You have to specify in the `rules` file how your application is to be compiled. But many applications use a small number of distinct build systems. For example, almost all C and C++ applications/libraries nowadays use GNU Autoconf/Automake, or CMake, or plain 'make' with a few standard target names. Almost all Python applications use setuptools. Almost all Ruby applications/libraries use RubyGems. Almost all Node.js applications/libraries use NPM or Yarn. The list goes on. There are very few custom, non-standard build systems out there. Can debhelper figure out automatically what build system we're using and take care of the compile and install-into-package-root steps for us? Why yes, it can!
 
-Also, imagine that you have to conform to even more Debian packaging requirements. You will have to find out which `dh_` tool to call and when in order to conform to those requirements. Can debhelper automatically figure out all possible things it can do instead of making you choose? Yes it can!
+Also, imagine that you have to conform to even more Debian packaging requirements. You will have to find out *which* `dh_` tool to call, and *when*, in order to conform to those requirements. Can debhelper automatically figure out all possible things it can do instead of making you choose? Yes it can!
 
 In this tutorial we will show you how to use debhelper to its fullest. Your rules file will delegate all work to debhelper, and will become very small as a result.
 
@@ -12,18 +12,17 @@ We will reuse the application from tutorial 3, and only modify the packaging wor
 
 **Table of contents**
 
- * Preparation
-   - Reproducing hello 3.0.0
-   - Reproducing `debian/control`
-   - Reproducing `debian/compat`
-   - Updating `debian/changelog`
- * Delegating work to debhelper
-   - Updating `debian/rules`
-   - Building and verifying the package
-   - Analysis
- * Delegating everything to debhelper
-   - Updating `debian/rules`
- * Conclusion
+ * [Preparation](#preparation)
+   - [Reproducing hello 3.0.0](#reproducing-hello-300)
+   - [Reproducing `debian/control`](#reproducing-debiancontrol)
+   - [Reproducing `debian/compat`](#reproducing-debiancompat)
+   - [Updating `debian/changelog`](#updating-debianchangelog)
+ * [Delegating work to debhelper](#delegating-work-to-debhelper)
+   - [Updating `debian/rules`](#updating-debianrules)
+   - [Building and verifying the package](#building-and-verifying-the-package)
+   - [Analysis](#analysis)
+ * [Delegating everything to debhelper](#delegating-everything-to-debhelper)
+ * [Conclusion](#conclusion)
 
 ## Preparation
 
@@ -159,7 +158,7 @@ What? Is that all? Yes it is.
 
  * `dh clean` automatically figures out that it needs to call `make clean`.
  * `dh build` automatically figures out that it needs to call `make`.
- * `dh binary` automatically figures out that it needs to call `make install DESTDIR=debian/hello`, `dh_strip`, `dh_gencontrol` and `dh_builddeb`.
+ * `dh binary` automatically figures out that it needs to call `make install DESTDIR=debian/hello`, `dh_strip` (which calls `strip` on our `hello` binary, among other things), `dh_gencontrol` and `dh_builddeb`.
 
 But if you look at the output then you see that debhelper actually does a whole lot more. You see that `dh binary` calls `dh_auto_install`, and that *that* tool is what is responsible for calling `make install`. You also see that `dh binary` calls `dh_compress`, `dh_makeshlibs`, etc.
 
@@ -183,7 +182,9 @@ We can make the rules file even smaller:
 
 Woah, what sort of black magic is this?
 
-The "%" is [the wildcard pattern rule](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html), similar to "*" in the context of bash. So "%:" is [the match-anything target](https://www.gnu.org/software/make/manual/html_node/Match_002dAnything-Rules.html#Match_002dAnything-Rules). "$@" refers to the actual target name as passed to Make. So the above rules file simply forwards all make commands to debhelper. It is semantically equivalent to the rules file you saw in subsection "Delegating work to debhelper".
+The "%" is [the wildcard pattern rule](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html) of GNU Make. Its function is similar to "*" in the context of Bash. So "%:" is [the match-anything target](https://www.gnu.org/software/make/manual/html_node/Match_002dAnything-Rules.html#Match_002dAnything-Rules). "$@" refers to the actual target name as passed to Make.
+
+So the above rules file simply forwards all make commands to debhelper. It is semantically equivalent to the rules file you saw in subsection "Delegating work to debhelper".
 
 ## Conclusion
 

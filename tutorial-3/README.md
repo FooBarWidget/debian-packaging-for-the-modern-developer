@@ -113,7 +113,7 @@ Compared to tutorial 2 we have made the following changes:
 
  * Added two dependencies: `${shlibs:Depends}, ${misc:Depends}`. These are magic keywords that are substituted by `dh_makeshlibs` and `dh_gencontrol`.
 
-   `dh_makeshlib` scans all the binary files in our package root directory, automatically infers any shared library dependencies that they have, and assigns them to these variables. When `dh_gencontrol` generates a control file, it substitutes these variables using the information inferred by `dh_makeshlibs`.
+   `dh_makeshlibs` scans all the binary files in our package root directory, automatically infers any shared library dependencies that they have, and assigns them to these variables. When `dh_gencontrol` generates a control file, it substitutes these variables using the information inferred by `dh_makeshlibs`.
 
    Our example program is a C program, so it depends on glibc. Indeed, `dh_gencontrol` substitutes these keywords with "glibc".
 
@@ -246,4 +246,4 @@ In this tutorial you have learned how to package an application that requires co
  * Modifying the `rules` file to call whatever commands are necessary to compile the application and to install it into the package root directory.
  * Modifying the `control` file to add a few packages dependency substitution keywords, build dependencies, and architecture information.
 
-You have also learned what debhelper is, how it relates to the mysterious `control/compat` file, and how you can see what debhelper is doing. But so far we have only used debhelper as minimally as is necessary to learn how it works. In the next tutorial we will show you how to make full use of debhelper, to the extent that debhelper may look like magic to those who haven't read this tutorial 3.
+You have also learned what debhelper is, how it relates to the mysterious `control/compat` file, how to work with the `dh_makeshlibs` tool, and how you can see what debhelper is doing. But so far we have only used debhelper as minimally as is necessary to learn how it works. In the next tutorial we will show you how to make full use of debhelper, to the extent that debhelper may look like magic to those who haven't read this tutorial 3.
