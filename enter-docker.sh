@@ -1,4 +1,9 @@
 #!/bin/bash
 set -e
-set -o pipefail
-exec docker-compose run --rm -e APP_UID="$(id -u)" -e APP_GID="$(id -g)" playground
+# --privileged is to make bindfs work in the container
+exec docker run -t -i --rm --init --privileged \
+	-e APP_UID="$(id -u)" \
+	-e APP_GID="$(id -g)" \
+	-v "$(pwd):/host.real" \
+	phusion/dpmd-playground:latest \
+	sudo -u app -H bash
