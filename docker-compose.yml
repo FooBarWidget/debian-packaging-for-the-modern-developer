@@ -3,7 +3,7 @@ services:
   playground:
     build: docker-env
     init: true
-    image: dpmd/playground
+    image: phusion/dpmd-playground:latest
     command: sudo -u app -H bash
     cap_add:
       # For bindfs
