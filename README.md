@@ -83,3 +83,4 @@ DPMD consists of tutorials that teach you step-by-step how all the different con
  * [Debian Developer's Reference: Overview of Debian Maintainer Tools](https://www.debian.org/doc/manuals/developers-reference/apa.en.html)
  * [debhelper man page](https://manpages.debian.org/stretch/debhelper/debhelper.7.en.html)
  * [debhelper dh overrides](https://joeyh.name/blog/entry/debhelper_dh_overrides/)
+ * [Pragmatic Debian packaging](https://vincent.bernat.im/en/blog/2016-pragmatic-debian-packaging)
