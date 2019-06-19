@@ -48,8 +48,8 @@ dpkg-buildpackage requires you to specify:
 
 These specifications are stored in text files inside a directory named `debian`. This directory is expected to live inside the application's source directory. So the structure you end up with looks as follows:
 
-    hello
-    ...and other application source files...
+  
+    ...application source files...
     debian/
         control
         changelog
@@ -59,17 +59,17 @@ These specifications are stored in text files inside a directory named `debian`.
 
 Then you invoke dpkg-buildpackage (`dpkg-buildpackage -b`) from the application's source directory. Dpkg-buildpackage compiles the application using your instructions. It also creates the package root directory (under `debian/<source package name>`) and create files in there based on your instructions on how that should be done. At this point you end up with a structure like so:
 
-    hello
-    ...and other application source files...
+    ...application source files...
     debian/
         control
         changelog
         compat
         rules
+	copyright
         ...and other specification files...
 
-        hello/   <--- this is the package root
-            DEBIAN/
+        package_name/   <--- this is the package root which will be moved to your machines root upon installation
+            DEBIAN/ <--- This folder isn't in the package after installing the deb
                 control
                 ...and other metadata files...
             usr/
