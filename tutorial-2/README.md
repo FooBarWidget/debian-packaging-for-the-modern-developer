@@ -166,7 +166,7 @@ The last line specifies who made these changes, and must be in the format of:
 
      -- <name> <<email address>>  <date in RFC 2822 format>
 
-Note that the file is extremely sensitive to spaces. For example there must be a space before the `--`, and there must be **two** spaces between the email address and the date.
+Note that the file is extremely sensitive to spaces. For example there must be a space before the `--`, and there must be **two** spaces between the email address and the date. Two spaces are also necessary before every bullet point of the list of changes.
 
 Tip: you can obtain the current date in RFC 2822 format by running:
 
@@ -204,7 +204,7 @@ build:
 binary:
 	mkdir -p debian/hello
 	mkdir -p debian/hello/usr/bin
-	cp hello debian/hello/usr/bin/
+	cp hello.py debian/hello/usr/bin/hello
 	dh_gencontrol
 	dh_builddeb
 ~~~
